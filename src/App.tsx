@@ -1,34 +1,65 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, {useState, useEffect, createContext} from 'react'
+import rootLogo from './assets/rootLogo.svg';
+import styled from '@emotion/styled';
+import { SuggestionsDatabase, Users } from './api/mockDatabase';
+import Suggestion from './components/suggestion';
+import SuggestionList from './components/suggestionList';
 
-function App() {
-  const [count, setCount] = useState(0)
+const HeaderTop = styled.header`
+  position: fixed;
+  background-color: darkgreen;
+  width: 100%;
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  img {
+    height: 1.5rem;
+  }
+  div {
+    margin-right: 3rem;
+  }
+`
+
+const Layout = styled.div`
+  display:flex;
+  nav {
+    padding-top: 2rem;
+    flex: 1;
+    border-right: solid white 1px;
+  }
+  main {
+    padding-top: 2rem;
+    flex: 6;
+  }
+`;
+
+export const Context = createContext();
+
+const App = () => {
+  const [selection, setSelection] = useState(SuggestionsDatabase[0])
+  const [user, setUser] = useState(Users[0])
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Context.Provider value={[user,setUser]}>
+      <HeaderTop>
+        <img src={rootLogo}/>
+        <div>
+          {`Hello ${user.name}`}
+        </div>
+      </HeaderTop>
+      <Layout>
+        <nav>
+          <SuggestionList
+            list={SuggestionsDatabase}
+            setSelection={setSelection}
+          />
+        </nav>
+        <main>
+          <Suggestion content={selection}/>
+        </main>
+      </Layout>
+    </Context.Provider>
   )
 }
 
