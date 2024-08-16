@@ -1,5 +1,5 @@
-export const getDate = (ts:string) => {
-  let d = new Date(parseInt(ts)*1000);
+export const getDate = (ts:number) => {
+  let d = new Date(ts*1000);
   let month = ("00" + (d.getMonth() + 1)).slice(-2);
   let day = ("00" + d.getDate()).slice(-2);
   let year = d.getFullYear();
@@ -7,8 +7,8 @@ export const getDate = (ts:string) => {
   return month + "/" + day + "/" + year;
 };
 
-export const getTime = (ts:string) => {
-  let d = new Date(parseInt(ts)*1000)
+export const getTime = (ts:number) => {
+  let d = new Date(ts*1000);
 
   let hours = d.getHours();
   let minutes = d.getMinutes();
@@ -19,9 +19,5 @@ export const getTime = (ts:string) => {
   hours = hours % 12;
   hours = hours ? hours : 12;
 
-  hours = ('00' + hours).slice(-2);
-  minutes = ('00' + minutes).slice(-2);
-  seconds = ('00' + seconds).slice(-2);
-
-  return hours + ':' + minutes + ':' + seconds + ' ' + newformat;
-}
+  return ('00' + hours).slice(-2) + ':' + ('00' + minutes).slice(-2) + ':' + ('00' + seconds).slice(-2) + ' ' + newformat;
+};

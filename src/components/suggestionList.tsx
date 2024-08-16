@@ -1,23 +1,41 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import SuggestionListItem from './suggestionListItem';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import { Modal } from '@mui/material';
 import NewSuggestionForm from './NewSuggestionForm';
+import { getSuggestions } from '../middleware/apiHarness';
+import { SuggestionProps } from '../App';
+
+interface SuggestionListProps {
+  setSelection: (suggestion:SuggestionProps) => void;
+};
+
+const NavContainer = styled.div`
+  height: 96vh;
+  display:flex;
+  flex-direction: column;
+`;
 
 const SuggestionListWrapper = styled.div`
+  flex: 1;
   width: 100%;
   display:flex;
   flex-direction: column;
-`
+  overflow-y: hidden;
+`;
+
+const SuggestionListItems = styled.div`
+  overflow-y: scroll;
+`;
 
 const SelectContainer = styled.button`
   background: none;
   border: none;
   text-align: left;
   cursor:pointer;
-  border-bottom: solid 1px grey;
-  margin: 1rem;
+  margin-top: 1rem;
+  width: 100%;
   &:hover {
     transition: 0.5s;
     background-color: grey;
@@ -40,26 +58,44 @@ const NewSuggestion = styled.button`
   }
 `;
 
-const SuggestionList = ({list, setSelection}) => {
-  const [open, setOpen] = React.useState(false);
+const SuggestionList = ({setSelection}:SuggestionListProps) => {
+  const [list, setList] = useState<SuggestionProps[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
+
+  const fetchSuggestions = async () =>{
+    const response = await getSuggestions();
+    setList(response.data);
+    setSelection(response.data[0]);
+  };
+
+  useEffect(()=>{
+    fetchSuggestions();
+  },[]);
+
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    fetchSuggestions();
+    setOpen(false);
+  };
 
   return (
-    <>
+    <NavContainer>
       <SuggestionListWrapper>
-      {
-        list.map((item) => (
-          <SelectContainer
-            key={item.id}
-            onClick={()=>setSelection(item)}
-          >
-            <SuggestionListItem
-              suggestion={item}
-            />
-          </SelectContainer>
-        ))
-      }
+        <SuggestionListItems>
+        {(list.length > 0) &&
+          list.map((item:SuggestionProps) => {
+            return (
+            <SelectContainer
+              key={item.id}
+              onClick={()=>setSelection(item)}
+            >
+              <SuggestionListItem
+                suggestion={item}
+              />
+            </SelectContainer>
+          )})
+        }
+        </SuggestionListItems>
       </SuggestionListWrapper>
       <NewSuggestion
         onClick={handleOpen}
@@ -69,14 +105,16 @@ const SuggestionList = ({list, setSelection}) => {
       </NewSuggestion>
       <Modal
         open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        onClose={()=>setOpen(false)}
       >
-        <NewSuggestionForm/>
+        <NewSuggestionForm
+          closeModal={handleClose}
+          cancelClose={setOpen}
+          list={list}
+        />
       </Modal>
-    </>
-  )
-}
+    </NavContainer>
+  );
+};
 
 export default SuggestionList;

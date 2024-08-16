@@ -1,41 +1,39 @@
 import { useState, useContext } from 'react'
-import { getOpenAIResponse } from '../api/chatGpt';
 import styled from '@emotion/styled';
 import ForwardOutlinedIcon from '@mui/icons-material/ForwardOutlined';
-import { Context } from '../App';
-import {DiscussionsDatabase, Users} from '../api/mockDatabase';
-import { getTime } from '../util/tools';
+import ChatRow from './ChatRow';
+import { postToChat } from '../middleware/apiHarness';
+import { SuggestionProps, Context } from '../App';
+
+interface SuggestionComponentProps {
+  selection: SuggestionProps;
+  chat:ChatProps[];
+  update:(id:SuggestionProps)=>void;
+};
+
+interface ChatProps {
+  id: string;
+  suggestionId: string;
+  user: string;
+  comment: string;
+  date: number;
+}
 
 const Wrapper = styled.div`
-  height: 100%;
+  height: 96vh;
   padding: 0 1rem;
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
-const ChatLog = styled.div``;
-
-const ChatRow = styled.div`
-  display: flex;
-  margin: 1rem 0;
-  align-items: center;
-  flex-direction: ${props => props.self?'row-reverse':'row'};
+const ChatBox = styled.div`
+  flex: 1;
+  overflow-y: hidden;
 `;
 
-const UserBubble = styled.div`
-  height: 2rem;
-  width: 2rem;
-  background-color: darkgreen;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: lightgreen;
-  border-radius: 2rem;
-  margin: 0 0.5rem;
-`;
-
-const ChatItem = styled.div`
-  background-color: ${props => props.self?'DodgerBlue':'gray'};
-  padding: 0.5rem;
-  border-radius: 10px;
+const ChatLog = styled.div`
+  overflow-y: scroll;
 `;
 
 const ChatInput = styled.form`
@@ -46,6 +44,7 @@ const ChatInput = styled.form`
   justify-content: center;
   align-items: center;
   padding: 0 1rem;
+  width: 95%;
   input {
     flex: 1;
     height: 2rem;
@@ -66,79 +65,57 @@ const ChatInput = styled.form`
   }
 `;
 
-const Suggestion = ({content}) => {
-  const [user, setUser] = useContext(Context)
-  // const [input, setInput] = useState('');
-  // const [response, setResponse] = useState('');
-  
-  // console.log(content)
+const Suggestion = ({selection, chat, update}:SuggestionComponentProps) => {
+  const [userData, setUserData] = useContext(Context);
+  const [chatInput, setChatInput] = useState("");
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   const aiResponse = await getOpenAIResponse(input);
-  //   setResponse(aiResponse.choices[0].text);
-  // }
+  const addNewChat = async () =>{
+    await postToChat({
+      suggestionId: selection.id,
+      user: userData.selected.id,
+      comment: chatInput,
+      date: Math.floor(Date.now()/1000)
+    });
+  };
+
+  const handleChatSubmit = (event:React.SyntheticEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    addNewChat();
+    update({...selection,newInput:chatInput});
+    setChatInput("");
+  };
+
   return (
     <Wrapper>
-      <h2>{content.title}</h2>
-      <h3>{content.description}</h3>
-      <ChatLog>
-      {
-        DiscussionsDatabase.map((chat) => {
-          const time = getTime(chat.date);
-          let author = null;
-          Users.find((user) => {
-            if(user.id === chat.user) {
-              author = user;
-            }
-          })
-
-          return (
-          <ChatRow
-            self={user.id === author.id}
-          >
-            <UserBubble>
-              {author.handle}
-            </UserBubble>
-            <ChatItem
-              self={user.id === author.id}
-            >
-              {chat.comment + ' - ' + time}
-            </ChatItem>
-          </ChatRow>
-        )})
-      }
-      </ChatLog>
-
-      <ChatInput>
+      <div>
+      <h2>{selection.title}</h2>
+      <h3>{selection.description}</h3>
+      <ChatBox>
+        <ChatLog>
+        {(chat.length > 0) &&
+          chat.map((chatRow) => (
+            <ChatRow 
+              chatData={chatRow}
+              key={chatRow.id}
+            />
+        ))}
+        </ChatLog>
+      </ChatBox>
+      </div>
+      <ChatInput onSubmit={handleChatSubmit}>
         <input
           placeholder='Add to the discussion...'
-        />
-        <button>
-          <ForwardOutlinedIcon/>
-        </button>
-      </ChatInput>
-      
-      {/* <form onSubmit={handleSubmit}>
-        <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          rows={5}
-          cols={50}
-          placeholder='Type your prompt here'
+          value={chatInput}
+          onChange={(event)=>setChatInput(event.target.value)}
         />
         <button
           type='submit'
         >
-          Get Response
+          <ForwardOutlinedIcon/>
         </button>
-      </form>
-      <div>
-        <h2>Response</h2>
-        <p>{response}</p>
-      </div> */}
+      </ChatInput>
     </Wrapper>
-  )
-}
+  );
+};
 
 export default Suggestion;

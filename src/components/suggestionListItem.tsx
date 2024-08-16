@@ -1,41 +1,42 @@
-import React from 'react';
+import { useState, useContext, useEffect } from 'react';
 import styled from '@emotion/styled';
 import {getDate, getTime} from '../util/tools';
-import { Users } from '../api/mockDatabase';
+import NameBubble from './NameBubble';
+import { SuggestionProps, Context, UserProps } from '../App';
+
+interface SuggestionListItemProps {
+  suggestion:SuggestionProps;
+};
 
 const SuggestionContainer = styled.div`
-  margin: 0.5rem;
+  padding: 0.5rem;
+  border-bottom: solid 1px gray;
   h4, p {
     margin: 0;
+  }
+  h4 {
+    font-weight: bold;
+    font-size: 1rem;
   }
   div {
     display: flex;
     align-items: center;
   }
+  div p {
+    margin: 0 0.5rem;
+  }
 `;
 
-const UserBubble = styled.div`
-  height: 2rem;
-  width: 2rem;
-  background-color: darkgreen;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: lightgreen;
-  border-radius: 2rem;
-  margin-right: 0.5rem;
-`;
-
-const SuggestionListItem = ({suggestion}) => {
+const SuggestionListItem = ({suggestion}:SuggestionListItemProps) => {
+  const [userData, setUserData] = useContext(Context);
+  const [author, setAuthor] = useState<UserProps|null>(null)
   const date = getDate(suggestion.date);
   const time = getTime(suggestion.date);
-  let author = null;
 
-  Users.find((user) => {
-    if(user.id === suggestion.submitter) {
-      author = user;
-    }
-  })
+  useEffect(() => {
+    let tempUserInfo = userData.users.filter((user:UserProps)=>user.id === suggestion.submitter);
+    setAuthor(tempUserInfo[0]);
+  },[]);
 
   return (
     <SuggestionContainer>
@@ -43,11 +44,12 @@ const SuggestionListItem = ({suggestion}) => {
       <p>{date + " @ " + time}</p>
       {author && (
         <div>
-          <UserBubble>{author.handle}</UserBubble><p>{author.name}</p>
+          <NameBubble name={author.name}/>
+          <p>{author.name}</p>
         </div>
       )}
     </SuggestionContainer>
-  )
-}
+  );
+};
 
 export default SuggestionListItem;
