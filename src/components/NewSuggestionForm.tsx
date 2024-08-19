@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import styled from '@emotion/styled';
 import { Context, SuggestionProps } from '../App';
 import { addSuggestion } from '../middleware/apiHarness';
+import { createRandomSuggestion } from '../middleware/contentGen';
 
 interface NewSuggestionFormProps {
   list:SuggestionProps[];
@@ -12,6 +13,7 @@ interface NewSuggestionFormProps {
 interface FormDataProps {
   title: string;
   description: string;
+  random: boolean;
 };
 
 const FormContainer = styled.div`
@@ -37,12 +39,20 @@ const FormContainer = styled.div`
     padding: 0.25rem;
     margin-bottom: 1rem;
     background: none;
+    &:disabled {
+      border: 2px darkgray solid;
+      background-color: gray;
+    }
   }
   textarea {
     border: 2px teal solid;
     border-radius: 6px;
     padding: 0.25rem;
     background: none;
+    &:disabled {
+      border: 2px darkgray solid;
+      background-color: gray;
+    }
   }
   @media (max-width: 800px) {
     padding: 0.5rem;
@@ -81,6 +91,7 @@ const NewSuggestionForm = ({
   const [formData, setFormData] = useState<FormDataProps>({
     title: "",
     description: "",
+    random: false,
   });
 
   const addNewSuggestion = async (item:SuggestionProps) =>{
@@ -89,7 +100,11 @@ const NewSuggestionForm = ({
 
   const handleSubmit = (event:React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if(formData.title.length === 0) {
+    console.log(formData)
+    if(formData.random) {
+      createRandomSuggestion();
+      closeModal();
+    } else if (formData.title.length === 0) {
       cancelClose(false)
     } else {
       let tempListItem = {
@@ -113,13 +128,22 @@ const NewSuggestionForm = ({
             placeholder='title'
             value={formData.title}
             onChange={(event)=>setFormData({...formData, title:event.target.value})}
+            disabled={formData.random}
           />
           <textarea
             placeholder='description'
             value={formData.description}
             onChange={(event)=>setFormData({...formData, description:event.target.value})}
             rows={6}
+            disabled={formData.random}
           />
+          <label>            
+            <input 
+              type='checkbox'
+              onChange={()=>setFormData({...formData,random:!formData.random})}
+            />
+            random suggestion
+          </label>
         </FormOptions>
         <ButtonOptions>
           <button

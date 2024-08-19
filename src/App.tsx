@@ -89,9 +89,9 @@ const App = () => {
 
   useEffect(()=>{
     //This generates 50 new random comments in a random suggestion
-    // for (let i = 0; i < 50; i++) {
-    //   createRandomChat();
-    // };
+    for (let i = 0; i < 50; i++) {
+      createRandomChat();
+    };
   
     fetchUsers();
   },[]);
