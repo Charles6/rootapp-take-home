@@ -83,7 +83,7 @@ const ChatInput = styled.form`
     border: none;
     cursor: pointer;
     &:hover {
-      color: green;
+      color: teal;
     }
   }
   @media (max-width: 800px) {
