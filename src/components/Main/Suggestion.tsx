@@ -107,6 +107,9 @@ const Suggestion = ({selection, chat, update }:SuggestionComponentProps) => {
 
   const handleChatSubmit = (event:React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (chatInput.length === 0) {
+      return;
+    };
     addNewChat();
     update({...selection,newInput:chatInput});
     setChatInput("");
