@@ -24,6 +24,9 @@ const ChatItem = styled.div<StyleProps>`
   padding: 0.5rem;
   border-radius: 10px;
   margin: 0 0.5rem;
+  @media (max-width: 800px) {
+    max-width: 75%;
+  }
 `;
 
 const ChatRow = ({chatData}:ChatDataProps) => {

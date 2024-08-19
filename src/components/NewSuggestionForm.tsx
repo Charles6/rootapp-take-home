@@ -32,19 +32,21 @@ const FormContainer = styled.div`
     justify-content: space-between;
   }
   input {
-    border: 2px green solid;
+    border: 2px teal solid;
     border-radius: 6px;
     padding: 0.25rem;
     margin-bottom: 1rem;
     background: none;
   }
   textarea {
-    border: 2px green solid;
+    border: 2px teal solid;
     border-radius: 6px;
     padding: 0.25rem;
     background: none;
   }
-  
+  @media (max-width: 800px) {
+    padding: 0.5rem;
+  }
 `;
 
 const FormOptions = styled.div`
@@ -65,7 +67,7 @@ const ButtonOptions = styled.div`
     cursor: pointer;
     &:hover {
       transition: 0.5s;
-      background-color: green;
+      background-color: teal;
     }
   }
 `;

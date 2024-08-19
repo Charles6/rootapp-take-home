@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import ForwardOutlinedIcon from '@mui/icons-material/ForwardOutlined';
 import ChatRow from './ChatRow';
 import { postToChat } from '../middleware/apiHarness';
-import { SuggestionProps, Context } from '../App';
+import { SuggestionProps, ChatProps, Context } from '../App';
 
 interface SuggestionComponentProps {
   selection: SuggestionProps;
@@ -11,33 +11,56 @@ interface SuggestionComponentProps {
   update:(id:SuggestionProps)=>void;
 };
 
-interface ChatProps {
-  id: string;
-  suggestionId: string;
-  user: string;
-  comment: string;
-  date: number;
-}
-
 const Wrapper = styled.div`
-  height: 96vh;
-  padding: 0 1rem;
+  height: 100%;
+  max-height: 100%;
+  padding: 3rem 0 0 1rem;
   display:flex;
   flex-direction: column;
   justify-content: space-between;
+  -moz-box-sizing: border-box; 
+  -webkit-box-sizing: border-box; 
+  box-sizing: border-box; 
+  @media (max-width: 800px) {
+    padding: 3rem 0.5rem 0;  
+    margin: 0 auto;
+    h3 {
+      font-size: 1rem;
+      margin: 0.25rem;
+    }
+    h2{
+      font-size: 1.2rem;
+      margin: 0.25rem;
+    }
+  }
+`;
+
+const NoComments = styled.div`
+  flex: 1;
+  width: 100%;
+  display:flex;
+  p{
+    font-style: italic
+  }
 `;
 
 const ChatBox = styled.div`
   flex: 1;
+  width: 100%;
+  display:flex;
+  flex-direction: column;
   overflow-y: hidden;
 `;
 
 const ChatLog = styled.div`
   overflow-y: scroll;
+  height: 100%;
+  display:flex;
+  flex-direction: column-reverse;
 `;
 
 const ChatInput = styled.form`
-  border: 2px green solid;
+  border: 2px Teal solid;
   margin: 1rem auto;
   border-radius: 2rem;
   display: flex;
@@ -63,11 +86,15 @@ const ChatInput = styled.form`
       color: green;
     }
   }
+  @media (max-width: 800px) {
+    width: 90%;
+    margin: 0 auto 0.25rem;
+  }
 `;
 
-const Suggestion = ({selection, chat, update}:SuggestionComponentProps) => {
+const Suggestion = ({selection, chat, update }:SuggestionComponentProps) => {
   const [userData, setUserData] = useContext(Context);
-  const [chatInput, setChatInput] = useState("");
+  const [chatInput, setChatInput] = useState<string>("");
 
   const addNewChat = async () =>{
     await postToChat({
@@ -87,21 +114,29 @@ const Suggestion = ({selection, chat, update}:SuggestionComponentProps) => {
 
   return (
     <Wrapper>
-      <div>
       <h2>{selection.title}</h2>
       <h3>{selection.description}</h3>
-      <ChatBox>
-        <ChatLog>
-        {(chat.length > 0) &&
-          chat.map((chatRow) => (
-            <ChatRow 
-              chatData={chatRow}
-              key={chatRow.id}
-            />
-        ))}
-        </ChatLog>
-      </ChatBox>
-      </div>
+      {(chat.length > 0)
+      ?(
+        <ChatBox>
+          <ChatLog >
+          {(chat.length > 0) &&
+            chat.map((chatRow) => (
+              <ChatRow 
+                chatData={chatRow}
+                key={chatRow.id}
+              />
+          ))}
+          </ChatLog>
+        </ChatBox>
+      )
+      :(
+        <NoComments>
+          <p>No comments yet. Start a conversation on this suggestion here.</p>
+        </NoComments>
+      )
+      }
+      
       <ChatInput onSubmit={handleChatSubmit}>
         <input
           placeholder='Add to the discussion...'

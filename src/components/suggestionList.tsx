@@ -6,27 +6,42 @@ import { Modal } from '@mui/material';
 import NewSuggestionForm from './NewSuggestionForm';
 import { getSuggestions } from '../middleware/apiHarness';
 import { SuggestionProps } from '../App';
+import { createRandomSuggestion } from '../middleware/contentGen';
 
 interface SuggestionListProps {
   setSelection: (suggestion:SuggestionProps) => void;
+  setMobileMenu: (state:boolean) => void;
 };
 
 const NavContainer = styled.div`
-  height: 96vh;
+  max-height: 100%;
+  padding: 0;
   display:flex;
+  width:100%;
   flex-direction: column;
+  justify-content: space-between;
+  -moz-box-sizing: border-box; 
+  -webkit-box-sizing: border-box; 
+  box-sizing: border-box;
 `;
 
 const SuggestionListWrapper = styled.div`
+  margin-top: 3rem;
   flex: 1;
   width: 100%;
   display:flex;
   flex-direction: column;
   overflow-y: hidden;
+  @media (max-width: 800px) {
+    margin-top: 0;
+  }
 `;
 
 const SuggestionListItems = styled.div`
   overflow-y: scroll;
+  @media (max-width: 800px) {
+    height: 94vh;
+  }
 `;
 
 const SelectContainer = styled.button`
@@ -58,7 +73,7 @@ const NewSuggestion = styled.button`
   }
 `;
 
-const SuggestionList = ({setSelection}:SuggestionListProps) => {
+const SuggestionList = ({ setSelection, setMobileMenu }:SuggestionListProps) => {
   const [list, setList] = useState<SuggestionProps[]>([]);
   const [open, setOpen] = useState<boolean>(false);
 
@@ -79,6 +94,7 @@ const SuggestionList = ({setSelection}:SuggestionListProps) => {
   };
 
   return (
+    <>
     <NavContainer>
       <SuggestionListWrapper>
         <SuggestionListItems>
@@ -87,7 +103,10 @@ const SuggestionList = ({setSelection}:SuggestionListProps) => {
             return (
             <SelectContainer
               key={item.id}
-              onClick={()=>setSelection(item)}
+              onClick={()=>{
+                setSelection(item);
+                setMobileMenu(false);
+              }}
             >
               <SuggestionListItem
                 suggestion={item}
@@ -114,6 +133,7 @@ const SuggestionList = ({setSelection}:SuggestionListProps) => {
         />
       </Modal>
     </NavContainer>
+    </>
   );
 };
 

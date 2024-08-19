@@ -8,11 +8,11 @@ interface NameBubbleProps {
 const Bubble = styled.div`
   height: 2rem;
   width: 2rem;
-  background-color: darkgreen;
+  background-color: Teal;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: lightgreen;
+  color: Turquoise;
   border-radius: 2rem;
   margin: 0;
 `;
