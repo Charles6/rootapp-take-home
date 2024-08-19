@@ -4,9 +4,9 @@ import SuggestionListItem from './suggestionListItem';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import { Modal } from '@mui/material';
 import NewSuggestionForm from './NewSuggestionForm';
-import { getSuggestions } from '../middleware/apiHarness';
-import { SuggestionProps } from '../App';
-import { createRandomSuggestion } from '../middleware/contentGen';
+import { getSuggestions } from '../../middleware/apiHarness';
+import { SuggestionProps } from '../../App';
+import { createRandomSuggestion } from '../../middleware/contentGen';
 
 interface SuggestionListProps {
   setSelection: (suggestion:SuggestionProps) => void;

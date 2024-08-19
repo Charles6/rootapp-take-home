@@ -2,8 +2,8 @@ import { useState, useContext } from 'react'
 import styled from '@emotion/styled';
 import ForwardOutlinedIcon from '@mui/icons-material/ForwardOutlined';
 import ChatRow from './ChatRow';
-import { postToChat } from '../middleware/apiHarness';
-import { SuggestionProps, ChatProps, Context } from '../App';
+import { postToChat } from '../../middleware/apiHarness';
+import { SuggestionProps, ChatProps, Context } from '../../App';
 
 interface SuggestionComponentProps {
   selection: SuggestionProps;

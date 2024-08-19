@@ -1,8 +1,8 @@
 import {useState, useEffect, useContext} from 'react';
 import styled from '@emotion/styled';
-import { ChatProps, Context, UserProps } from '../App';
-import { getTime } from '../util/tools';
-import NameBubble from './NameBubble';
+import { ChatProps, Context, UserProps } from '../../App';
+import { getTime } from '../../util/tools';
+import NameBubble from '../NameBubble';
 
 interface ChatDataProps {
   chatData:ChatProps;

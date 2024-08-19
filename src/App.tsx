@@ -1,7 +1,7 @@
 import {useState, createContext, useEffect, useRef} from 'react';
 import styled from '@emotion/styled';
-import Suggestion from './components/suggestion';
-import SuggestionList from './components/suggestionList';
+import Suggestion from './components/Main/suggestion';
+import SuggestionList from './components/Nav/SuggestionList';
 import HeaderContent from './components/Header';
 import Login from './components/Login';
 import { getChat, getUsers } from './middleware/apiHarness';

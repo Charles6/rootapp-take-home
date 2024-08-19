@@ -1,8 +1,8 @@
 import React, { useState, useContext } from 'react';
 import styled from '@emotion/styled';
-import { Context, SuggestionProps } from '../App';
-import { addSuggestion } from '../middleware/apiHarness';
-import { createRandomSuggestion } from '../middleware/contentGen';
+import { Context, SuggestionProps } from '../../App';
+import { addSuggestion } from '../../middleware/apiHarness';
+import { createRandomSuggestion } from '../../middleware/contentGen';
 
 interface NewSuggestionFormProps {
   list:SuggestionProps[];

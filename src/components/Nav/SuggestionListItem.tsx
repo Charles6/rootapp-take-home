@@ -1,8 +1,8 @@
 import { useState, useContext, useEffect } from 'react';
 import styled from '@emotion/styled';
-import {getDate, getTime} from '../util/tools';
-import NameBubble from './NameBubble';
-import { SuggestionProps, Context, UserProps } from '../App';
+import {getDate, getTime} from '../../util/tools';
+import NameBubble from '../NameBubble';
+import { SuggestionProps, Context, UserProps } from '../../App';
 
 interface SuggestionListItemProps {
   suggestion:SuggestionProps;
